@@ -1,5 +1,6 @@
 defmodule DiscussWeb.TopicController do
   use DiscussWeb, :controller
+  alias Discuss.Repo
 
   alias Discuss.Discussions
   alias Discuss.Discussions.Topic
@@ -9,22 +10,36 @@ defmodule DiscussWeb.TopicController do
     render(conn, "index.html", topics: topics)
   end
 
-  def new(conn, _params) do
-    changeset = Discussions.change_topic(%Topic{})
+  # def new(conn, _params) do
+  #   changeset = Discussions.change_topic(%Topic{})
+  #   render(conn, "new.html", changeset: changeset)
+  # end
+
+  def new(conn, params) do
+    changeset = Topic.changeset(%Topic{}, %{})
     render(conn, "new.html", changeset: changeset)
   end
 
-  def create(conn, %{"topic" => topic_params}) do
-    case Discussions.create_topic(topic_params) do
-      {:ok, topic} ->
-        conn
-        |> put_flash(:info, "Topic created successfully.")
-        |> redirect(to: Routes.topic_path(conn, :show, topic))
+  def create(conn, %{"topic" => topic}) do
+    changeset = Topic.changeset(%Topic{}, topic)
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
+    case Repo.insert(changeset) do
+      {:ok, post} -> IO.inspect(post)
+      {:error, changeset} -> IO.inspect(changeset)
     end
   end
+
+  # def create(conn, %{"topic" => topic_params}) do
+  #   case Discussions.create_topic(topic_params) do
+  #     {:ok, topic} ->
+  #       conn
+  #       |> put_flash(:info, "Topic created successfully.")
+  #       |> redirect(to: Routes.topic_path(conn, :show, topic))
+
+  #     {:error, %Ecto.Changeset{} = changeset} ->
+  #       render(conn, "new.html", changeset: changeset)
+  #   end
+  # end
 
   def show(conn, %{"id" => id}) do
     topic = Discussions.get_topic!(id)
