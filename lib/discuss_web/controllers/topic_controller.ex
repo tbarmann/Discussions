@@ -34,6 +34,12 @@ defmodule DiscussWeb.TopicController do
     end
   end
 
+  def index(conn, _params) do
+    topics = Repo.all(Topic)
+    IO.inspect(topics)
+    render(conn, "index.html", topics: topics)
+  end
+
   # def create(conn, %{"topic" => topic_params}) do
   #   case Discussions.create_topic(topic_params) do
   #     {:ok, topic} ->
