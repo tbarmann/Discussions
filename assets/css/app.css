@@ -33,6 +33,7 @@
   color: #a94442;
   display: block;
   margin: -1rem 0 2rem;
+  text-transform: capitalize;
 }
 
 /* LiveView specific classes for your customization */
@@ -118,3 +119,4 @@
   0% { opacity: 1; }
   100% { opacity: 0; }
 }
+
