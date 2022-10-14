@@ -5,10 +5,10 @@ defmodule DiscussWeb.TopicController do
   alias Discuss.Discussions
   alias Discuss.Discussions.Topic
 
-  def index(conn, _params) do
-    topics = Discussions.list_topics()
-    render(conn, "index.html", topics: topics)
-  end
+  # def index(conn, _params) do
+  #   topics = Discussions.list_topics()
+  #   render(conn, "index.html", topics: topics)
+  # end
 
   # def new(conn, _params) do
   #   changeset = Discussions.change_topic(%Topic{})
@@ -24,7 +24,7 @@ defmodule DiscussWeb.TopicController do
     changeset = Topic.changeset(%Topic{}, topic)
 
     case Repo.insert(changeset) do
-      {:ok, post} ->
+      {:ok, _topic} ->
         conn
         |> put_flash(:info, "Topic created")
         |> redirect(to: Routes.topic_path(conn, :index))
@@ -34,10 +34,41 @@ defmodule DiscussWeb.TopicController do
     end
   end
 
+  def edit(conn, %{"id" => topic_id}) do
+    topic = Repo.get(Topic, topic_id)
+    changeset = Topic.changeset(topic)
+
+    render(conn, "edit.html", changeset: changeset, topic: topic)
+  end
+
+  def update(conn, %{"id" => topic_id, "topic" => topic}) do
+    old_topic = Repo.get(Topic, topic_id)
+    changeset = Topic.changeset(old_topic, topic)
+
+    case Repo.update(changeset) do
+      {:ok, _topic} ->
+        conn
+        |> put_flash(:info, "Topic updated")
+        |> redirect(to: Routes.topic_path(conn, :index))
+
+      {:error, changeset} ->
+        render(conn, "edit.html", changeset: changeset, topic: old_topic)
+    end
+  end
+
   def index(conn, _params) do
     topics = Repo.all(Topic)
     IO.inspect(topics)
     render(conn, "index.html", topics: topics)
+  end
+
+  def delete(conn, %{"id" => topic_id}) do
+    Repo.get!(Topic, topic_id)
+    |> Repo.delete!()
+
+    conn
+    |> put_flash(:info, "Topic deleted")
+    |> redirect(to: Routes.topic_path(conn, :index))
   end
 
   # def create(conn, %{"topic" => topic_params}) do
@@ -52,37 +83,37 @@ defmodule DiscussWeb.TopicController do
   #   end
   # end
 
-  def show(conn, %{"id" => id}) do
-    topic = Discussions.get_topic!(id)
-    render(conn, "show.html", topic: topic)
-  end
+  # def show(conn, %{"id" => id}) do
+  #   topic = Discussions.get_topic!(id)
+  #   render(conn, "show.html", topic: topic)
+  # end
 
-  def edit(conn, %{"id" => id}) do
-    topic = Discussions.get_topic!(id)
-    changeset = Discussions.change_topic(topic)
-    render(conn, "edit.html", topic: topic, changeset: changeset)
-  end
+  #   def edit(conn, %{"id" => id}) do
+  #     topic = Discussions.get_topic!(id)
+  #     changeset = Discussions.change_topic(topic)
+  #     render(conn, "edit.html", topic: topic, changeset: changeset)
+  #   end
 
-  def update(conn, %{"id" => id, "topic" => topic_params}) do
-    topic = Discussions.get_topic!(id)
+  #   def update(conn, %{"id" => id, "topic" => topic_params}) do
+  #     topic = Discussions.get_topic!(id)
 
-    case Discussions.update_topic(topic, topic_params) do
-      {:ok, topic} ->
-        conn
-        |> put_flash(:info, "Topic updated successfully.")
-        |> redirect(to: Routes.topic_path(conn, :show, topic))
+  #     case Discussions.update_topic(topic, topic_params) do
+  #       {:ok, topic} ->
+  #         conn
+  #         |> put_flash(:info, "Topic updated successfully.")
+  #         |> redirect(to: Routes.topic_path(conn, :show, topic))
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", topic: topic, changeset: changeset)
-    end
-  end
+  #       {:error, %Ecto.Changeset{} = changeset} ->
+  #         render(conn, "edit.html", topic: topic, changeset: changeset)
+  #     end
+  #   end
 
-  def delete(conn, %{"id" => id}) do
-    topic = Discussions.get_topic!(id)
-    {:ok, _topic} = Discussions.delete_topic(topic)
+  #   def delete(conn, %{"id" => id}) do
+  #     topic = Discussions.get_topic!(id)
+  #     {:ok, _topic} = Discussions.delete_topic(topic)
 
-    conn
-    |> put_flash(:info, "Topic deleted successfully.")
-    |> redirect(to: Routes.topic_path(conn, :index))
-  end
+  #     conn
+  #     |> put_flash(:info, "Topic deleted successfully.")
+  #     |> redirect(to: Routes.topic_path(conn, :index))
+  #   end
 end
