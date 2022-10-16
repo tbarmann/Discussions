@@ -5,6 +5,9 @@ defmodule DiscussWeb.TopicController do
   alias Discuss.Discussions
   alias Discuss.Discussions.Topic
 
+  # will only execute if one of these actions are passed to the controller
+  plug(DiscussWeb.Plugs.RequireAuth when action in [:new, :create, :edit, :update, :delete])
+
   # def index(conn, _params) do
   #   topics = Discussions.list_topics()
   #   render(conn, "index.html", topics: topics)
