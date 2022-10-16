@@ -4,6 +4,7 @@ defmodule Discuss.Discussions.Topic do
 
   schema "topics" do
     field(:title, :string)
+    belongs_to(:user, Discuss.Discussions.User)
 
     timestamps()
   end
