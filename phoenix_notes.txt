@@ -21,4 +21,15 @@ SELECT u0."id", u0."email", u0."provider", u0."token", u0."inserted_at", u0."upd
 }
 
 Phoenix will not by default fetch associations
+-----------------------------------------
+
+Generate migration
+
+iex> mix ecto.gen.migration add_comments
+
+will generate migration, stored in `priv` folder
+
+Run migration
+iex> mix ecto.migrate
+
 
