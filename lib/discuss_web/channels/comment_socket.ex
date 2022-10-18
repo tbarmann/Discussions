@@ -7,7 +7,6 @@ defmodule DiscussWeb.CommentSocket do
 
   @impl true
   def connect(_params, socket, _connect_info) do
-    IO.inspect("++++++++++++++++++ HERE")
     {:ok, socket}
   end
 

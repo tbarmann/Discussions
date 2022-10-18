@@ -1,7 +1,7 @@
 defmodule DiscussWeb.CommentsChannel do
   use DiscussWeb, :channel
   alias Discuss.Repo
-  alias Discuss.Discussions.Topic
+  alias Discuss.Discussions.{Topic, Comment}
 
   # socket is like the connection object in controllers;
   # it represents the entire lifecycle of the socket
@@ -10,10 +10,23 @@ defmodule DiscussWeb.CommentsChannel do
 
     topic = Repo.get(Topic, topic_id)
 
-    {:ok, %{topic: topic.title}, socket}
+    {:ok, %{topic: topic.title}, assign(socket, :topic, topic)}
   end
 
-  def handle_in(name, message, socket) do
-    {:reply, :ok, socket}
+  def handle_in(name, %{"content" => content}, socket) do
+    topic = socket.assigns.topic
+
+    changeset =
+      topic
+      |> Ecto.build_assoc(:comments)
+      |> Comment.changeset(%{content: content})
+
+    case Repo.insert(changeset) do
+      {:ok, comment} ->
+        {:reply, :ok, socket}
+
+      {:error, _reason} ->
+        {:reply, {:error, %{errors: changeset}}, socket}
+    end
   end
 end
