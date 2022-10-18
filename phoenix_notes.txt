@@ -33,3 +33,10 @@ Run migration
 iex> mix ecto.migrate
 
 
+----------------------
+
+Channels
+
+in CommentsChannel module, join() is called whenever a javascript client
+attempts to join this channel.
+
