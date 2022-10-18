@@ -8,9 +8,13 @@ defmodule DiscussWeb.CommentsChannel do
   def join("comments:" <> topic_id, _params, socket) do
     topic_id = String.to_integer(topic_id)
 
-    topic = Repo.get(Topic, topic_id)
+    # fetching topic and associated comments
+    topic =
+      Topic
+      |> Repo.get(topic_id)
+      |> Repo.preload(:comments)
 
-    {:ok, %{topic: topic.title}, assign(socket, :topic, topic)}
+    {:ok, %{comments: topic.comments}, assign(socket, :topic, topic)}
   end
 
   def handle_in(name, %{"content" => content}, socket) do
