@@ -1,4 +1,7 @@
 defmodule Discuss.Discussions.Comment do
+  use Ecto.Schema
+  import Ecto.Changeset
+
   schema "comments" do
     field(:content, :string)
     belongs_to(:user, Discuss.Discussions.User)
