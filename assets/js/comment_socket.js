@@ -6,9 +6,11 @@ let socket = new Socket("/live", {params: {token: window.userToken}})
 
 socket.connect()
 
-let channel = socket.channel("comments:1", {})
-channel.join()
-  .receive("ok", resp => { console.log("Joined successfully", resp) })
-  .receive("error", resp => { console.log("Unable to join", resp) })
+const createSocket = (topicId) => {
+  let channel = socket.channel(`comments:${topicId}`, {})
+  channel.join()
+    .receive("ok", resp => { console.log("Joined successfully", resp) })
+    .receive("error", resp => { console.log("Unable to join", resp) })
+}
 
-export default socket
+window.createSocket = createSocket;
