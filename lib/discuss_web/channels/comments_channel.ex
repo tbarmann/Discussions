@@ -12,7 +12,8 @@ defmodule DiscussWeb.CommentsChannel do
     topic =
       Topic
       |> Repo.get(topic_id)
-      |> Repo.preload(:comments)
+      # get nested association user belonging to each comment
+      |> Repo.preload(comments: [:user])
 
     {:ok, %{comments: topic.comments}, assign(socket, :topic, topic)}
   end
